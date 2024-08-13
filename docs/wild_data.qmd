@@ -1,0 +1,88 @@
+---
+title: "Day 2 activity wild data"
+author: "Haylee Oyler"
+format: html
+editor: source
+execute:
+  warning: false
+  message: false
+editor_options: 
+  chunk_output_type: console
+---
+
+# Wild data
+
+```{r}
+# Load libraries
+library(tidyverse)
+library(here)
+library(janitor)
+```
+
+### Read in the data
+
+```{r}
+mack_verts <- read.csv(here::here("data", "AS00601.csv"))
+mack_verts <- clean_names(mack_verts)
+
+# dogs <- data.frame(name = c("teddy", "banjo", "waffle"), age = c(5, 8, 2))
+# dogs
+# # waffle_age <- dogs[dogs$name == "waffle", dogs$age] doesn't work bc syntax
+# waffle_age <- dogs[dogs$name == "waffle",]$age
+```
+
+## A bit of wrangling and exploring
+
+```{r}
+mc_wt_5 <- mack_verts[5, 15]
+mc_wt_5_2 <- mack_verts[5,]$weight
+mc_length_8_20 <- mack_verts[8:20,]$length1
+mc_dates <- c(mack_verts$sampledate)
+```
+
+## Salamander subset
+
+```{r}
+mc_salamanders <- mack_verts %>% filter(species == "DITE")
+```
+
+## Salamander scatterplot
+
+```{r}
+ggplot(mc_salamanders, aes(x = length1, 
+                           y = weight)) +
+  geom_point(aes(color = weight),show.legend = FALSE) +
+  scale_color_gradient(low = "purple", high = "green") +
+  theme_minimal() +
+  labs(title = "Snout length versus weight for salamanders",
+       x = "Snout length (mm)",
+       y = "Weight (g)")
+```
+
+## Saving the file
+
+```{r}
+ggsave(here::here("figs", "salamander_size.png"), bg = "white")
+```
+
+## Cutthroat trout
+
+```{r}
+mc_trout <- mack_verts %>% filter(species == "ONCL")
+```
+
+```{r}
+ggplot(mc_trout, aes(x = length1, y = weight)) + 
+  geom_point(aes(color = reach)) +
+  facet_wrap(vars(reach)) + 
+  scale_color_manual(values = c("mediumspringgreen","magenta2", "dodgerblue")) +
+  theme_minimal() +
+  labs(title = "Cutthroat trout length versus weight", 
+       x = "Length (mm)",
+       y = "Weight (g)")
+```
+
+```{r}
+ggsave(here::here("figs", "cutthroat_size.png"), bg = "white")
+```
+
